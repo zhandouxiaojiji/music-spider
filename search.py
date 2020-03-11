@@ -13,10 +13,10 @@ dr.get(url)
 dr.implicitly_wait(5)
 
 # 设置关闭自动播放
-dr.find_elements_by_css_selector(".am-btn.am-round")[1].click()
-dr.find_elements_by_css_selector(".am-icon-checked")[-1].click()
-dr.find_elements_by_css_selector(".am-modal-btn")[-1].click()
-sleep(1)
+# dr.find_elements_by_css_selector(".am-btn.am-round")[1].click()
+# dr.find_elements_by_css_selector(".am-icon-checked")[-1].click()
+# dr.find_elements_by_css_selector(".am-modal-btn")[-1].click()
+# sleep(1)
 
 while True:
     more_btn = dr.find_element_by_css_selector(".aplayer-more")
