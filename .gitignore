@@ -2,3 +2,5 @@ bash.exe.stackdump
 data/
 __pycache__/
 tasks.json
+debug.log
+task/
