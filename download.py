@@ -12,6 +12,8 @@ def downloadfile(url, path):
     :param path: 保存目录
     """
     loading_path = path + ".download"
+    if os.path.exists(loading_path):
+        os.remove(loading_path)
     with open(loading_path, "wb") as fw:
         try:
             with requests.get(url, stream=True, timeout=5) as r:
@@ -49,9 +51,7 @@ def downloadfile(url, path):
             if os.path.exists(loading_path):
                 os.remove(loading_path)
 
-
-# path = sys.argv[1]
-path = "data"
+path = sys.argv[1] or "data"
 if not os.path.exists(path):
     os.mkdir(path)
 
