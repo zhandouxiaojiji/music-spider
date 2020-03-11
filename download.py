@@ -1,8 +1,5 @@
-"""使用模块线程方式实现网络资源的下载
-# 实现文件下载, 期间显示文件信息&下载进度
-# 控制台运行以显示进度
-"""
 import requests
+import sys
 import json
 import os.path as op
 import os
@@ -14,19 +11,19 @@ def downloadfile(url, path):
     :param url: 资源地址
     :param path: 保存目录
     """
-    try:
-        with open(path, "wb") as fw:
-            with requests.get(url, stream=True) as r:
+    loading_path = path + ".download"
+    with open(loading_path, "wb") as fw:
+        try:
+            with requests.get(url, stream=True, timeout=5) as r:
                 # 此时只有响应头被下载
                 # print(r.headers)
-                print("下载文件基本信息:")
                 print('-' * 30)
+                print("下载文件基本信息:")
                 print("文件类型:", r.headers["Content-Type"])
                 filesize = r.headers["Content-Length"]
                 print("文件大小:", filesize, "bytes")
                 print("下载地址:", url)
                 print("保存路径:", path)
-                print('-' * 30)
                 print("开始下载")
 
                 chunk_size = 128
@@ -42,17 +39,23 @@ def downloadfile(url, path):
                         show += show2
                     else:
                         stdout.write("下载进度: 100%")
+                fw.close()
+                os.rename(loading_path, path)
                 print("\n结束下载")
-    except expression as identifier:
-        if os.path.exists(path):
-            os.remove(path)
+                print('-' * 30)
+        except requests.exceptions.RequestException as e:
+            print("下载失败:"+path)
+            fw.close()
+            if os.path.exists(loading_path):
+                os.remove(loading_path)
 
 
-path = sys.argv[1]
+# path = sys.argv[1]
+path = "data"
 if not os.path.exists(path):
     os.mkdir(path)
-f = open('tasks.json', 'r')
-content = f.read()
+
+f = open('tasks.json', 'r', encoding='utf-8')
 tasks = json.loads(f.read())
 print(type(tasks))
 print(tasks)
@@ -60,12 +63,12 @@ f.close()
 for task in tasks:
     print("download:"+task["name"])
     download_url = task["url"]
-      download_path = path+'/'+task["name"]
-      if download_url:
-            if os.path.exists(download_path):
-                print("skip.")
-            else:
-                downloadfile(download_url, download_path)
-                # urllib.request.urlretrieve(download_url, download_path)
+    download_path = path+'/'+task["name"]
+    if download_url:
+        if os.path.exists(download_path):
+            print("skip.")
         else:
-            print("url null")
+            downloadfile(download_url, download_path)
+            # urllib.request.urlretrieve(download_url, download_path)
+    else:
+        print("url null")
