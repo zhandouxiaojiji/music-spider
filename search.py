@@ -6,6 +6,10 @@ from selenium import webdriver
 from time import sleep
 
 search = sys.argv[1]
+task_path = sys.argv[2]
+if not task_path:
+    task_path = "tasks.json"
+
 url = 'http://tool.liumingye.cn/music/?page=audioPage&type=migu&name='+search
 
 dr = webdriver.Chrome()
@@ -39,29 +43,29 @@ for download_btn in arr:
         elem = dr.find_element_by_id("name")
         name = elem.get_attribute('value')
         print(name)
-        elem_flac = dr.find_element_by_id("url_flac")
-        elem_320 = dr.find_element_by_id("url_320")
-        elem_128 = dr.find_element_by_id("url_128")
-        elem_m4a = dr.find_element_by_id("url_m4a")
-        if elem_flac:
+        url_flac = dr.find_element_by_id("url_flac").get_attribute('value')
+        url_320 = dr.find_element_by_id("url_320").get_attribute('value')
+        url_128 = dr.find_element_by_id("url_128").get_attribute('value')
+        url_m4a = dr.find_element_by_id("url_m4a").get_attribute('value')
+        if url_flac != '':
             tasks.append({
                 "name": name+".flac",
-                "url": elem_flac.get_attribute('value')
+                "url": url_flac
             })
-        elif elem_320:
+        elif url_320:
             tasks.append({
                 "name": name+".mp3",
-                "url": elem_320.get_attribute('value')
+                "url": url_320
             })
-        elif elem_128:
+        elif url_128:
             tasks.append({
                 "name": name+".mp3",
-                "url": elem_128.get_attribute('value')
+                "url": url_128
             })
-        elif elem_m4a:
+        elif url_m4a:
             tasks.append({
                 "name": name+".mp3",
-                "url": elem_m4a.get_attribute('value')
+                "url": url_m4a
             })
         dr.find_element_by_css_selector(
             "body>#m-download>.am-modal-dialog>.am-modal-footer").click()
@@ -69,7 +73,7 @@ for download_btn in arr:
     except:
         print("无法下载")
 
-f2 = open('tasks.json', 'w+', encoding='utf-8')
+f2 = open(task_path, 'w+', encoding='utf-8')
 f2.write(json.dumps(tasks, ensure_ascii=False, indent = 4))
 f2.close()
 print(tasks)
